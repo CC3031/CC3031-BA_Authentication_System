@@ -96,7 +96,12 @@ def register():
 # dashboard - all
 @app.route("/dashboard")
 def dashboard():
-    return render_template("Pages/Dashboard.html")
+    user = get_logged_in_user()
+    if not user:
+        return redirect(url_for("login"))
+    if user.role == "admin":
+        return render_template("Pages/AdminDashboard.html", user=user)
+    return render_template("Pages/EmployeeDashboard.html", user=user)
 
 # employee+
 @app.route("/equipment")
