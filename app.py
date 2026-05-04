@@ -26,7 +26,7 @@ def get_logged_in_user():
 # all
 @app.route("/", methods=["GET", "POST"])
 def login():
-    
+    session.clear()
     errors = []
 
     if request.method == "POST":
@@ -50,6 +50,7 @@ def login():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    session.clear()
     errors = []
 
     if request.method == "POST":
@@ -98,7 +99,7 @@ def register():
 @app.route("/dashboard")
 def dashboard():
     user = get_logged_in_user()
-    if user.id is None:
+    if not user:
         return redirect(url_for("login"))
     else:
         return render_template("Pages/Dashboard.html", user=user)
@@ -107,7 +108,7 @@ def dashboard():
 @app.route("/equipment")
 def equipment_list():
     user = get_logged_in_user()
-    if user.id is None:
+    if not user:
         return redirect(url_for("login"))
     else:
         return render_template("Pages/Equipment.html")
@@ -115,7 +116,7 @@ def equipment_list():
 @app.route("/customers")
 def customer_list():
     user = get_logged_in_user()
-    if user.id is None:
+    if not user:
         return redirect(url_for("login"))
     else:
         return render_template("Pages/CustomerList.html")
@@ -123,7 +124,7 @@ def customer_list():
 @app.route("/rentals")
 def rental_list():
     user = get_logged_in_user()
-    if user.id is None:
+    if not user:
         return redirect(url_for("login"))
     else:
         return render_template("Pages/RentalList.html")
@@ -131,7 +132,7 @@ def rental_list():
 @app.route("/rentals/create")
 def create_rental():
     user = get_logged_in_user()
-    if user.id is None:
+    if not user:
         return redirect(url_for("login"))
     else:
         return render_template("Pages/CreateRental.html")
@@ -140,7 +141,7 @@ def create_rental():
 @app.route("/equipment/manage")
 def manage_equipment():
     user = get_logged_in_user()
-    if user.id is None:
+    if not user:
         return redirect(url_for("login"))
     elif user.access == "admin":
         return redirect(url_for("dashboard"))
@@ -150,7 +151,7 @@ def manage_equipment():
 @app.route("/reports/revenue")
 def revenue_reports():
     user = get_logged_in_user()
-    if user.id is None:
+    if not user:
         return redirect(url_for("login"))
     elif user.access == "admin":
         return redirect(url_for("dashboard"))
