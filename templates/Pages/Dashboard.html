@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Dashboard</h1>
+    <p>Welcome, {{ user.firstname }} {{ user.lastname }}</p>
+
+    {% if user.role == "customer" %}
+        <h2>Equipment</h2>
+        <ul>
+            <li><a href="{{ url_for('equipment_list') }}">Browse Equipment</a></li>
+        </ul>
+
+        <h2>My Rentals</h2>
+        <ul>
+            <li><a href="{{ url_for('rental_list') }}">View My Rentals</a></li>
+            <li><a href="{{ url_for('create_rental') }}">Create New Rental</a></li>
+        </ul>
+
+    {% elif user.role == "employee" %}
+        <h2>Equipment</h2>
+        <ul>
+            <li><a href="{{ url_for('equipment_list') }}">View Equipment List</a></li>
+        </ul>
+
+        <h2>Customers</h2>
+        <ul>
+            <li><a href="{{ url_for('customer_list') }}">View Customer List</a></li>
+        </ul>
+
+        <h2>Rentals</h2>
+        <ul>
+            <li><a href="{{ url_for('rental_list') }}">View Rental List</a></li>
+            <li><a href="{{ url_for('create_rental') }}">Create New Rental</a></li>
+        </ul>
+
+    {% elif user.role == "admin" %}
+        <h2>Equipment</h2>
+        <ul>
+            <li><a href="{{ url_for('equipment_list') }}">View Equipment List</a></li>
+            <li><a href="{{ url_for('manage_equipment') }}">Manage Equipment</a></li>
+        </ul>
+
+        <h2>Customers</h2>
+        <ul>
+            <li><a href="{{ url_for('customer_list') }}">View Customer List</a></li>
+        </ul>
+
+        <h2>Rentals</h2>
+        <ul>
+            <li><a href="{{ url_for('rental_list') }}">View Rental List</a></li>
+            <li><a href="{{ url_for('create_rental') }}">Create New Rental</a></li>
+        </ul>
+
+        <h2>Reports</h2>
+        <ul>
+            <li><a href="{{ url_for('revenue_reports') }}">Revenue Reports</a></li>
+        </ul>
+    {% endif %}
+
+    <hr>
+    <a href="{{ url_for('login') }}">Logout</a>
+</body>
+</html>
