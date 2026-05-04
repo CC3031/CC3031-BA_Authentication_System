@@ -9,19 +9,7 @@
     <h1>Dashboard</h1>
     <p>Welcome, {{ user.firstname }} {{ user.lastname }}</p>
 
-    {% if user.role == "customer" %}
-        <h2>Equipment</h2>
-        <ul>
-            <li><a href="{{ url_for('equipment_list') }}">Browse Equipment</a></li>
-        </ul>
-
-        <h2>My Rentals</h2>
-        <ul>
-            <li><a href="{{ url_for('rental_list') }}">View My Rentals</a></li>
-            <li><a href="{{ url_for('create_rental') }}">Create New Rental</a></li>
-        </ul>
-
-    {% elif user.role == "employee" %}
+    {% if user.access == "employee" %}
         <h2>Equipment</h2>
         <ul>
             <li><a href="{{ url_for('equipment_list') }}">View Equipment List</a></li>
@@ -38,7 +26,7 @@
             <li><a href="{{ url_for('create_rental') }}">Create New Rental</a></li>
         </ul>
 
-    {% elif user.role == "admin" %}
+    {% elif user.access == "admin" %}
         <h2>Equipment</h2>
         <ul>
             <li><a href="{{ url_for('equipment_list') }}">View Equipment List</a></li>
