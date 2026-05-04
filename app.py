@@ -77,6 +77,7 @@ def register():
                 username=username,
                 password_hash=hash_password(password, salt),
                 salt=salt,
+                access="employee"
             )
             db_session.add(new_user)
             db_session.commit()
@@ -90,33 +91,65 @@ def register():
 # dashboard - all
 @app.route("/dashboard")
 def dashboard():
-    return render_template("Pages/Dashboard.html")
+    user = get_logged_in_user()
+    if user.id is None:
+        return redirect(url_for("login"))
+    else:
+        return render_template("Pages/Dashboard.html", user=user)
 
 # employee+
 @app.route("/equipment")
 def equipment_list():
-    return render_template("Pages/Equipment.html")
+    user = get_logged_in_user()
+    if user.id is None:
+        return redirect(url_for("login"))
+    else:
+        return render_template("Pages/Equipment.html")
 
 @app.route("/customers")
 def customer_list():
-    return render_template("Pages/CustomerList.html")
+    user = get_logged_in_user()
+    if user.id is None:
+        return redirect(url_for("login"))
+    else:
+        return render_template("Pages/CustomerList.html")
 
 @app.route("/rentals")
 def rental_list():
-    return render_template("Pages/RentalList.html")
+    user = get_logged_in_user()
+    if user.id is None:
+        return redirect(url_for("login"))
+    else:
+        return render_template("Pages/RentalList.html")
 
 @app.route("/rentals/create")
 def create_rental():
-    return render_template("Pages/CreateRental.html")
+    user = get_logged_in_user()
+    if user.id is None:
+        return redirect(url_for("login"))
+    else:
+        return render_template("Pages/CreateRental.html")
 
 # admin
 @app.route("/equipment/manage")
 def manage_equipment():
-    return render_template("Pages/ManageEquipment.html")
+    user = get_logged_in_user()
+    if user.id is None:
+        return redirect(url_for("login"))
+    elif user.access == "admin":
+        return redirect(url_for("dashboard"))
+    else:
+        return render_template("Pages/ManageEquipment.html")
 
 @app.route("/reports/revenue")
 def revenue_reports():
-    return render_template("Pages/RevenueReports.html")
+    user = get_logged_in_user()
+    if user.id is None:
+        return redirect(url_for("login"))
+    elif user.access == "admin":
+        return redirect(url_for("dashboard"))
+    else:
+        return render_template("Pages/RevenueReports.html")
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
