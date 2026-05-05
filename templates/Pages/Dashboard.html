@@ -52,6 +52,8 @@
     {% endif %}
 
     <hr>
-    <a href="{{ url_for('login') }}" class="logout">Logout</a>
+    <p>Want to register as an admin? Click <a href="{{ url_for('register', as_admin='yes') }}">here</a>.</p>
+    <hr>
+    <a href="{{ url_for('login') }}">Logout</a>
 </body>
 </html>

@@ -52,6 +52,7 @@ def login():
 def register():
     session.clear()
     errors = []
+    as_admin = request.args.get("as_admin")
 
     if request.method == "POST":
         firstname = request.form.get("firstname", "").strip()
@@ -77,15 +78,24 @@ def register():
 
         if not errors:
             salt = generate_salt()
-
-            new_user = User(
-                firstname=firstname,
-                lastname=lastname,
-                username=username,
-                password_hash=hash_password(password, salt),
-                salt=salt,
-                access="employee"
-            )
+            if not as_admin:
+                new_user = User(
+                    firstname=firstname,
+                    lastname=lastname,
+                    username=username,
+                    password_hash=hash_password(password, salt),
+                    salt=salt,
+                    access="employee"
+                )
+            else:
+                new_user = User(
+                    firstname=firstname,
+                    lastname=lastname,
+                    username=username,
+                    password_hash=hash_password(password, salt),
+                    salt=salt,
+                    access="admin"
+                )
             db_session.add(new_user)
             db_session.commit()
             return redirect(url_for("login"))
