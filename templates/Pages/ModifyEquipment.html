@@ -6,39 +6,24 @@
 <title>Modify Equipment</title>
 
 <script>
-function loadEquipment() {
-    let select = document.getElementById("equipment");
-    let selectedOption = select.options[select.selectedIndex];
-
-    if (select.value !== "0") {
-        let text = selectedOption.text;
-
-        // Split name and price
-        let name = text.split(" - $")[0];
-        let price = select.value;
-
-        document.getElementById("name").value = name;
-        document.getElementById("price").value = price;
-    }
-}
-
 function updateEquipment() {
-    let select = document.getElementById("equipment");
-    let selectedIndex = select.selectedIndex;
+    let oldPrice = parseFloat(document.getElementById("equipment").value);
+    let newPrice = parseFloat(document.getElementById("newEquipment").value);
 
-    let newName = document.getElementById("name").value;
-    let newPrice = document.getElementById("price").value;
+    let oldDays = parseInt(document.getElementById("oldDays").value);
+    let newDays = parseInt(document.getElementById("newDays").value);
 
-    if (selectedIndex === 0) {
-        alert("Select equipment first.");
+    if (oldPrice === 0 || newPrice === 0 || !oldDays || !newDays) {
+        alert("Please select equipment and enter days for both.");
         return;
     }
 
-    // Update dropdown option
-    select.options[selectedIndex].text = newName + " - $" + newPrice + "/day";
-    select.options[selectedIndex].value = newPrice;
+    let oldTotal = oldPrice * oldDays;
+    let newTotal = newPrice * newDays;
 
-    alert("Equipment updated!");
+    document.getElementById("result").innerHTML =
+        "The Old rental was: $" + oldTotal.toFixed(2) +
+        "<br> The new Rental is: $" + newTotal.toFixed(2);
 }
 </script>
 
@@ -47,8 +32,8 @@ function updateEquipment() {
 
 <h1>Modify Equipment</h1>
 
-<label for="equipment">Select Equipment:</label>
-<select id="equipment" onchange="loadEquipment()">
+<label>What equipment did you select?</label>
+<select id="equipment">
     <option value="0">-- Select Equipment --</option>
     <option value="15">Power Drill - $15/day</option>
     <option value="20">Impact Driver - $20/day</option>
@@ -62,15 +47,34 @@ function updateEquipment() {
     <option value="35">Paint Sprayer - $35/day</option>
 </select>
 
+<label>Days rented (old):</label>
+<input type="number" id="oldDays" min="1">
+
 <br><br>
 
-<label>Equipment Name:</label><br>
-<input type="text" id="name"><br><br>
+<label>Select your new equipment:</label>
+<select id="newEquipment">
+    <option value="0">-- Select Equipment --</option>
+    <option value="15">Power Drill - $15/day</option>
+    <option value="20">Impact Driver - $20/day</option>
+    <option value="25">Circular Saw - $25/day</option>
+    <option value="18">Jigsaw - $18/day</option>
+    <option value="22">Angle Grinder - $22/day</option>
+    <option value="30">Hammer Drill - $30/day</option>
+    <option value="12">Heat Gun - $12/day</option>
+    <option value="16">Electric Sander - $16/day</option>
+    <option value="28">Nail Gun - $28/day</option>
+    <option value="35">Paint Sprayer - $35/day</option>
+</select>
 
-<label>Price per Day ($):</label><br>
-<input type="number" id="price"><br><br>
+<label>Days rented (new):</label>
+<input type="number" id="newDays" min="1">
+
+<br><br>
 
 <button onclick="updateEquipment()">Update Equipment</button>
+
+<p id="result"></p>
 
 </body>
 </html>
