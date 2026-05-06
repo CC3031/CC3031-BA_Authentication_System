@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>Dashboard</h1>
-    <p>Welcome, {{ user.firstname }} {{ user.lastname }}</p>
+    <p>Welcome, {{ user.firstname }} {{ user.lastname }} ({{ user.access }})</p>
 
     {% if user.access == "employee" %}
         <h2>Equipment</h2>
