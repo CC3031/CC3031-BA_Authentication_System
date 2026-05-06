@@ -78,14 +78,14 @@ def register():
 
         if not errors:
             salt = generate_salt()
-            if not as_admin:
+            if as_admin == "yes":
                 new_user = User(
                     firstname=firstname,
                     lastname=lastname,
                     username=username,
                     password_hash=hash_password(password, salt),
                     salt=salt,
-                    access="employee"
+                    access="admin"
                 )
             else:
                 new_user = User(
@@ -94,7 +94,7 @@ def register():
                     username=username,
                     password_hash=hash_password(password, salt),
                     salt=salt,
-                    access="admin"
+                    access="employee"
                 )
             db_session.add(new_user)
             db_session.commit()
@@ -121,7 +121,7 @@ def equipment_list():
     if not user:
         return redirect(url_for("login"))
     else:
-        return render_template("Pages/Equipment.html")
+        return render_template("Pages/EquipmentList.html")
 
 @app.route("/customers")
 def customer_list():
@@ -130,6 +130,9 @@ def customer_list():
         return redirect(url_for("login"))
     else:
         return render_template("Pages/CustomerList.html")
+
+    users = db_session.query(User).all()
+    return render_template("Pages/CustomerList.html", users=users)
 
 @app.route("/rentals")
 def rental_list():
@@ -153,17 +156,17 @@ def manage_equipment():
     user = get_logged_in_user()
     if not user:
         return redirect(url_for("login"))
-    elif user.access == "admin":
+    elif user.access == "employee":
         return redirect(url_for("dashboard"))
     else:
-        return render_template("Pages/ManageEquipment.html")
+        return render_template("Pages/ModifyEquipment.html")
 
 @app.route("/reports/revenue")
 def revenue_reports():
     user = get_logged_in_user()
     if not user:
         return redirect(url_for("login"))
-    elif user.access == "admin":
+    elif user.access == "employee":
         return redirect(url_for("dashboard"))
     else:
         return render_template("Pages/RevenueReports.html")
