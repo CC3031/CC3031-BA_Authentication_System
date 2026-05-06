@@ -129,10 +129,8 @@ def customer_list():
     if not user:
         return redirect(url_for("login"))
     else:
-        return render_template("Pages/CustomerList.html")
-
-    users = db_session.query(User).all()
-    return render_template("Pages/CustomerList.html", users=users)
+        users = db_session.query(User).all()
+        return render_template("Pages/CustomerList.html", users=users)
 
 @app.route("/rentals")
 def rental_list():
