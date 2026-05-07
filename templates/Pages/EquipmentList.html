@@ -1,43 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<link rel="stylesheet" href="../../static/ModifyEquipment.css">
-<title>Equipment</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../static/CreateRental.css">
+    <title>Equipment List</title>
 </head>
 <body>
+    <div class="equipment">
+        <h1>Rental Stuff LLC</h1>
+        <h2>Equipment</h2>
 
-<h1>Handheld Equipment Rentals</h1>
-
-<label for="equipment">Choose Equipment:</label>
-<select id="equipment" onchange="showPrice()">
-    <option value="0">-- Select Equipment --</option>
-    <option value="15">Power Drill - $15/day</option>
-    <option value="20">Impact Driver - $20/day</option>
-    <option value="25">Circular Saw - $25/day</option>
-    <option value="18">Jigsaw - $18/day</option>
-    <option value="22">Angle Grinder - $22/day</option>
-    <option value="30">Hammer Drill - $30/day</option>
-    <option value="12">Heat Gun - $12/day</option>
-    <option value="16">Electric Sander - $16/day</option>
-    <option value="28">Nail Gun - $28/day</option>
-    <option value="35">Paint Sprayer - $35/day</option>
-</select>
-
-<h2 id="Total Price">Total Price:</h2>
-<p id="price">$0.00 per day</p>
-
-<script>
-    function showPrice() {
-        let equipment = document.getElementById("equipment");
-        let price = equipment.value;
-
-        document.getElementById("price").innerHTML = "$" + price + ".00 per day";
-    }
-</script>
-
-
-
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Stock</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in equipment %}
+                <tr>
+                    <td>{{ e.name }}</td>
+                    <td>{{ e.stock }}</td>
+                    <td>{{ e.price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
