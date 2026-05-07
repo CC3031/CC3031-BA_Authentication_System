@@ -1,80 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<link rel="stylesheet" href="../../static/ModifyEquipment.css">
-<title>Modify Equipment</title>
-
-<script>
-function updateEquipment() {
-    let oldPrice = parseFloat(document.getElementById("equipment").value);
-    let newPrice = parseFloat(document.getElementById("newEquipment").value);
-
-    let oldDays = parseInt(document.getElementById("oldDays").value);
-    let newDays = parseInt(document.getElementById("newDays").value);
-
-    if (oldPrice === 0 || newPrice === 0 || !oldDays || !newDays) {
-        alert("Please select equipment and enter days for both.");
-        return;
-    }
-
-    let oldTotal = oldPrice * oldDays;
-    let newTotal = newPrice * newDays;
-
-    document.getElementById("result").innerHTML =
-        "The Old rental was: $" + oldTotal.toFixed(2) +
-        "<br> The new Rental is: $" + newTotal.toFixed(2);
-}
-</script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Equipment</title>
+    <link rel="stylesheet" href="../../static/CreateRental.css">
 </head>
 <body>
+    <div class="container">
+        <h1>Rental Stuff LLC</h1>
+        <h2>Add Equipment</h2>
+        <form method="POST">
+            <div>
+                <label for="name">Equipment Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
 
-<h1>Modify Equipment</h1>
+            <div>
+                <label for="price">Rental Price</label>
+                <input type="number" step="0.01" id="price" name="price" required>
+            </div>
 
-<label>What equipment did you select?</label>
-<select id="equipment">
-    <option value="0">-- Select Equipment --</option>
-    <option value="15">Power Drill - $15/day</option>
-    <option value="20">Impact Driver - $20/day</option>
-    <option value="25">Circular Saw - $25/day</option>
-    <option value="18">Jigsaw - $18/day</option>
-    <option value="22">Angle Grinder - $22/day</option>
-    <option value="30">Hammer Drill - $30/day</option>
-    <option value="12">Heat Gun - $12/day</option>
-    <option value="16">Electric Sander - $16/day</option>
-    <option value="28">Nail Gun - $28/day</option>
-    <option value="35">Paint Sprayer - $35/day</option>
-</select>
+            <div>
+                <label for="stock">Available Stock</label>
+                <input type="number" id="stock" name="stock" required>
+            </div>
 
-<label>Days rented (old):</label>
-<input type="number" id="oldDays" min="1">
+            <button>Add Equipment</button>
+        </form>
 
-<br><br>
-
-<label>Select your new equipment:</label>
-<select id="newEquipment">
-    <option value="0">-- Select Equipment --</option>
-    <option value="15">Power Drill - $15/day</option>
-    <option value="20">Impact Driver - $20/day</option>
-    <option value="25">Circular Saw - $25/day</option>
-    <option value="18">Jigsaw - $18/day</option>
-    <option value="22">Angle Grinder - $22/day</option>
-    <option value="30">Hammer Drill - $30/day</option>
-    <option value="12">Heat Gun - $12/day</option>
-    <option value="16">Electric Sander - $16/day</option>
-    <option value="28">Nail Gun - $28/day</option>
-    <option value="35">Paint Sprayer - $35/day</option>
-</select>
-
-<label>Days rented (new):</label>
-<input type="number" id="newDays" min="1">
-
-<br><br>
-
-<button onclick="updateEquipment()">Update Equipment</button>
-
-<p id="result"></p>
-
+        <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+    </div>
 </body>
 </html>

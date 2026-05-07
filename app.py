@@ -1,11 +1,8 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, session
-from models import Base, User, engine, db_session
+from models import Base, engine, db_session, User, Customer, Equipment, Rental
 from security import hash_password, check_password, generate_salt
-
-
-
 
 load_dotenv()
 
@@ -13,15 +10,11 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
 Base.metadata.create_all(engine)
 
-
-
-
 def get_logged_in_user():
     user_id = session.get("user_id")
     if not user_id:
         return None
     return db_session.query(User).filter_by(id=user_id).first()
-
 
 # all
 @app.route("/", methods=["GET", "POST"])
@@ -48,11 +41,16 @@ def login():
         return redirect(url_for("dashboard"))
     return render_template("Pages/Login.html", form_data={}, errors=[])
 
+# all
 @app.route("/register", methods=["GET", "POST"])
 def register():
     session.clear()
     errors = []
-    as_admin = request.args.get("as_admin")
+
+    as_role = request.form.get("as_role", "customer")
+    if as_role not in ["employee", "admin"]:
+        as_role = "customer"
+    print(as_role)
 
     if request.method == "POST":
         firstname = request.form.get("firstname", "").strip()
@@ -78,96 +76,127 @@ def register():
 
         if not errors:
             salt = generate_salt()
-            if as_admin == "yes":
-                new_user = User(
-                    firstname=firstname,
-                    lastname=lastname,
-                    username=username,
-                    password_hash=hash_password(password, salt),
-                    salt=salt,
-                    access="admin"
-                )
-            else:
-                new_user = User(
-                    firstname=firstname,
-                    lastname=lastname,
-                    username=username,
-                    password_hash=hash_password(password, salt),
-                    salt=salt,
-                    access="employee"
-                )
+            new_user = User(
+                firstname=firstname,
+                lastname=lastname,
+                username=username,
+                password_hash=hash_password(password, salt),
+                salt=salt,
+                access=as_role
+            )
+            print(as_role)
             db_session.add(new_user)
             db_session.commit()
+
+            if as_role == "customer":
+                new_customer = Customer(
+                    firstname = firstname,
+                    lastname = lastname,
+                    user_id = new_user.id
+                )
+                db_session.add(new_customer)
+                db_session.commit()
             return redirect(url_for("login"))
-          
         return render_template("Pages/Register.html", errors=errors, form_data=request.form)
-      
     return render_template("Pages/Register.html", errors=[], form_data={})
 
-
-# dashboard - all
+# all
 @app.route("/dashboard")
 def dashboard():
     user = get_logged_in_user()
     if not user:
         return redirect(url_for("login"))
-    else:
-        return render_template("Pages/Dashboard.html", user=user)
+    return render_template("Pages/Dashboard.html", user=user, message=None)
 
-# employee+
+# all
 @app.route("/equipment")
 def equipment_list():
     user = get_logged_in_user()
     if not user:
         return redirect(url_for("login"))
-    else:
-        return render_template("Pages/EquipmentList.html")
+    equipment = db_session.query(Equipment).all()
+    return render_template("Pages/EquipmentList.html", equipment=equipment)
 
+# employee+
 @app.route("/customers")
 def customer_list():
     user = get_logged_in_user()
     if not user:
         return redirect(url_for("login"))
-    else:
-        users = db_session.query(User).all()
-        return render_template("Pages/CustomerList.html", users=users)
+    if user.access == "customer":
+        return redirect(url_for("dashboard"))
 
+    customers = db_session.query(Customer).all()
+    return render_template("Pages/CustomerList.html", customers=customers)
+
+# all (customers can only view their own rentals)
 @app.route("/rentals")
 def rental_list():
     user = get_logged_in_user()
     if not user:
         return redirect(url_for("login"))
-    else:
-        return render_template("Pages/RentalList.html")
 
-@app.route("/rentals/create")
+    if user.access == "customer":
+        customer = db_session.query(Customer).filter_by(user_id=user.id).first()
+        rentals = db_session.query(Rental).filter_by(customer_id=customer.id).all()
+        return render_template("Pages/RentalList.html", rentals=rentals)
+
+    rentals = db_session.query(Rental).all()
+    return render_template("Pages/RentalList.html", rentals=rentals)
+
+# all (employees and admins must provide a customer account for rental)
+@app.route("/rentals/create", methods=["GET", "POST"])
 def create_rental():
     user = get_logged_in_user()
     if not user:
         return redirect(url_for("login"))
+
+    equipment = db_session.query(Equipment).all()
+    if request.method == "GET":
+        return render_template("Pages/CreateRental.html", user=user, errors=[], equipment=equipment)
+
+    if user.access != "customer":
+        customer_id = request.form.get("customer_id")
+        customer = db_session.query(Customer).filter_by(id=customer_id).first()
+        if not customer:
+            return render_template("Pages/CreateRental.html", user=user, errors="Customer not found", equipment=equipment)
     else:
-        return render_template("Pages/CreateRental.html")
+        customer = db_session.query(Customer).filter_by(user_id=user.id).first()
+        customer_id = db_session.query(Customer).filter_by(customer_id=customer.id).first()
+
+    selected_equipment_id = request.form.get("equipment_id")
+    quantity = request.form.get("quantity")
+    selected_equipment =  db_session.query(Equipment).filter_by(equipment_id=selected_equipment_id).first()
+
+    new_rental = Rental(
+        equipment_id = selected_equipment_id,
+        customer_id = customer_id,
+        quantity = quantity,
+        price = quantity * selected_equipment.price
+    )
+    db_session.add(new_rental)
+    db_session.commit()
+    return redirect(url_for("dashboard", message="Rental added successfully"))
 
 # admin
-@app.route("/equipment/manage")
+@app.route("/equipment/manage", methods=["GET","POST"])
 def manage_equipment():
     user = get_logged_in_user()
     if not user:
         return redirect(url_for("login"))
-    elif user.access == "employee":
+    if user.access in ["customer", "employee"]:
         return redirect(url_for("dashboard"))
-    else:
-        return render_template("Pages/ModifyEquipment.html")
+    return render_template("Pages/ModifyEquipment.html")
 
+# admin
 @app.route("/reports/revenue")
 def revenue_reports():
     user = get_logged_in_user()
     if not user:
         return redirect(url_for("login"))
-    elif user.access == "employee":
+    if user.access in ["customer", "employee"]:
         return redirect(url_for("dashboard"))
-    else:
-        return render_template("Pages/RevenueReports.html")
+    return render_template("Pages/RevenueReports.html")
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)

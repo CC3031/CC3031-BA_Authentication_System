@@ -10,7 +10,26 @@
     <h1>Dashboard</h1>
     <p>Welcome, {{ user.firstname }} {{ user.lastname }} ({{ user.access }})</p>
 
-    {% if user.access == "employee" %}
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+
+    {% if user.access == "customer" %}
+        <h2>Equipment</h2>
+        <ul>
+            <li><a href="{{ url_for('equipment_list') }}">View Equipment List</a></li>
+        </ul>
+
+        <h2>Rentals</h2>
+        <ul>
+            <li><a href="{{ url_for('rental_list') }}">View Rental List</a></li>
+            <li><a href="{{ url_for('create_rental') }}">Create New Rental</a></li>
+        </ul>
+
+        <hr>
+        <p>Want to register as an employee? Click <a href="{{ url_for('register', as_role='employee') }}">here</a>.</p>
+
+    {% elif user.access == "employee" %}
         <h2>Equipment</h2>
         <ul>
             <li><a href="{{ url_for('equipment_list') }}">View Equipment List</a></li>
@@ -26,6 +45,9 @@
             <li><a href="{{ url_for('rental_list') }}">View Rental List</a></li>
             <li><a href="{{ url_for('create_rental') }}">Create New Rental</a></li>
         </ul>
+
+        <hr>
+        <p>Want to register as an admin? Click <a href="{{ url_for('register', as_role='admin') }}">here</a>.</p>
 
     {% elif user.access == "admin" %}
         <h2>Equipment</h2>
@@ -50,9 +72,6 @@
             <li><a href="{{ url_for('revenue_reports') }}">Revenue Reports</a></li>
         </ul>
     {% endif %}
-
-    <hr>
-    <p>Want to register as an admin? Click <a href="{{ url_for('register', as_admin='yes') }}">here</a>.</p>
     <hr>
     <a href="{{ url_for('login') }}">Logout</a>
 </body>
