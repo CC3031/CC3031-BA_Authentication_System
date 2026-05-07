@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from sqlalchemy.sql.functions import user
+# TODO: implement stock decreasing and error handling logic
 
 from models import Base, engine, db_session, User, Customer, Equipment, Rental
 from security import hash_password, check_password, generate_salt
@@ -159,12 +159,11 @@ def create_rental():
 
     if user.access != "customer":
         customer_id = request.form.get("customer_id")
-        customer = db_session.query(Customer).filter_by(id=customer_id).first()
+        customer = db_session.query(Customer).filter_by(id=customer_id).first().id
         if not customer:
             return render_template("Pages/CreateRental.html", user=user, errors="Customer not found", equipment=equipment)
     else:
         customer = db_session.query(Customer).filter_by(user_id=user.id).first()
-        customer_id = db_session.query(Customer).filter_by(customer_id=customer.id).first()
 
     selected_equipment_id = request.form.get("equipment_id")
     quantity = int(request.form.get("quantity"))
@@ -172,7 +171,7 @@ def create_rental():
 
     new_rental = Rental(
         equipment_id = selected_equipment_id,
-        customer_id = customer_id,
+        customer_id = customer.id,
         quantity = quantity,
         price = quantity * selected_equipment.price
     )

@@ -14,17 +14,17 @@
         <table>
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>First Name</th>
                     <th>Last Name</th>
-                    <th>Access</th>
                 </tr>
             </thead>
             <tbody>
                 {% for customer in customers %}
                 <tr>
+                    <td>{{ customer.id }}</td>
                     <td>{{ customer.firstname }}</td>
                     <td>{{ customer.lastname }}</td>
-                    <td>{{ customer.access }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
