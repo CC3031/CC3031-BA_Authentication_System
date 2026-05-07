@@ -31,7 +31,7 @@ h1 {
     margin-bottom: 6px;
     letter-spacing: -0.3px;
 }
-body > p {
+p {
     text-align: center;
     color: var(--text-muted);
     font-size: 0.95rem;
@@ -111,4 +111,8 @@ a.logout:hover {
     h1 {
         font-size: 1.6rem;
     }
+}
+
+.messages {
+    color: green;
 }

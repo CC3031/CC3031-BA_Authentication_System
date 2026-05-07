@@ -1,6 +1,8 @@
 import os
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from sqlalchemy.sql.functions import user
+
 from models import Base, engine, db_session, User, Customer, Equipment, Rental
 from security import hash_password, check_password, generate_salt
 
@@ -106,7 +108,7 @@ def dashboard():
     user = get_logged_in_user()
     if not user:
         return redirect(url_for("login"))
-    return render_template("Pages/Dashboard.html", user=user, message=None)
+    return render_template("Pages/Dashboard.html", user=user)
 
 # all
 @app.route("/equipment")
@@ -165,8 +167,8 @@ def create_rental():
         customer_id = db_session.query(Customer).filter_by(customer_id=customer.id).first()
 
     selected_equipment_id = request.form.get("equipment_id")
-    quantity = request.form.get("quantity")
-    selected_equipment =  db_session.query(Equipment).filter_by(equipment_id=selected_equipment_id).first()
+    quantity = int(request.form.get("quantity"))
+    selected_equipment =  db_session.query(Equipment).filter_by(id=selected_equipment_id).first()
 
     new_rental = Rental(
         equipment_id = selected_equipment_id,
@@ -176,7 +178,8 @@ def create_rental():
     )
     db_session.add(new_rental)
     db_session.commit()
-    return redirect(url_for("dashboard", message="Rental added successfully"))
+    flash("Rental added successfully")
+    return redirect(url_for("dashboard"))
 
 # admin
 @app.route("/equipment/manage", methods=["GET","POST"])
@@ -186,7 +189,31 @@ def manage_equipment():
         return redirect(url_for("login"))
     if user.access in ["customer", "employee"]:
         return redirect(url_for("dashboard"))
-    return render_template("Pages/ModifyEquipment.html")
+    if request.method == "GET":
+        return render_template("Pages/ModifyEquipment.html", user=user, errors=[])
+
+    errors = []
+    name = request.form.get("name")
+    price = request.form.get("price")
+    stock = request.form.get("stock")
+
+    equipment = db_session.query(Equipment).all()
+    names = []
+    for e in equipment:
+        names.append(e.name)
+    if name in names:
+        errors.append("Equipment with this name already exists")
+        return render_template("Pages/ModifyEquipment.html", user=user, errors=errors)
+
+    new_equipment = Equipment(
+        name = name,
+        price = price,
+        stock = stock
+    )
+    db_session.add(new_equipment)
+    db_session.commit()
+    flash("Equipment added successfully")
+    return redirect(url_for("dashboard"))
 
 # admin
 @app.route("/reports/revenue")

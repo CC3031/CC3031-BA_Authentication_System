@@ -9,6 +9,14 @@
 <body>
     <div class="container">
         <h1>Rental Stuff LLC</h1>
+
+        {% if errors %}
+            <ul class="errors">
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+        {% endif %}
+
         <h2>Add Equipment</h2>
         <form method="POST">
             <div>
@@ -17,13 +25,13 @@
             </div>
 
             <div>
-                <label for="price">Rental Price</label>
-                <input type="number" step="0.01" id="price" name="price" required>
+                <label for="price">Price Per Unit</label>
+                <input type="number" step="0.01" id="price" name="price" min="0.01" required>
             </div>
 
             <div>
                 <label for="stock">Available Stock</label>
-                <input type="number" id="stock" name="stock" required>
+                <input type="number" id="stock" name="stock" min="1" required>
             </div>
 
             <button>Add Equipment</button>
