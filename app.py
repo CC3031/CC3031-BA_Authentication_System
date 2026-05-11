@@ -87,6 +87,7 @@ def register():
             print(as_role)
             db_session.add(new_user)
             db_session.commit()
+            db_session.close()
 
             if as_role == "customer":
                 new_customer = Customer(
@@ -96,6 +97,7 @@ def register():
                 )
                 db_session.add(new_customer)
                 db_session.commit()
+                db_session.close()
             return redirect(url_for("login"))
         return render_template("Pages/Register.html", errors=errors, form_data=request.form)
     return render_template("Pages/Register.html", errors=[], form_data={})
@@ -138,6 +140,7 @@ def return_rental():
     selected_rental.status = "closed"
     db_session.add_all([rented_equipment, selected_rental])
     db_session.commit()
+    db_session.close()
 
     flash("Rental returned successfully")
     return redirect(url_for("dashboard"))
@@ -210,6 +213,7 @@ def create_rental():
     )
     db_session.add_all([new_rental, selected_equipment])
     db_session.commit()
+    db_session.close()
     flash("Rental added successfully")
     return redirect(url_for("dashboard"))
 
@@ -244,6 +248,7 @@ def manage_equipment():
     )
     db_session.add(new_equipment)
     db_session.commit()
+    db_session.close()
     flash("Equipment added successfully")
     return redirect(url_for("dashboard"))
 
