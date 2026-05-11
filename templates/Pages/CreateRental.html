@@ -31,7 +31,6 @@
                 <select name="equipment_id" id="equipment_id" required>
                     {% for e in equipment %}
                         <option value="{{ e.id }}">
-                            ${{ "%.2f"|format(e.price) }}
                             {{ e.name }} - ${{ "%.2f"|format(e.price) }} - x{{ e.stock }}
                         </option>
                     {% endfor %}
