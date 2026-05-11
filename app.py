@@ -119,6 +119,30 @@ def equipment_list():
     equipment = db_session.query(Equipment).all()
     return render_template("Pages/EquipmentList.html", equipment=equipment)
 
+@app.route("/rentals/return")
+def return_rental():
+    user = get_logged_in_user()
+    if not user:
+        return redirect(url_for("login"))
+    if user.access in ["admin", "employee"]:
+        return redirect(url_for("dashboard"))
+    if request.method == "GET":
+        customer = db_session.query(Customer).filter_by(user_id=user.id).first()
+        rentals = db_session.query(Rental).filter_by(customer_id=customer.id).all()
+        return render_template("Pages/CreateRental.html", user=user, rentals=rentals)
+
+    ### implement  return logic for post
+
+    selected_equipment_id = request.form.get("equipment_id")
+    quantity = int(request.form.get("quantity"))
+    selected_equipment = db_session.query(Equipment).filter_by(id=selected_equipment_id).first()
+
+    ### add updated stock value to db, remove rental from db
+    db_session.commit()
+    flash("Rental returned successfully")
+    return redirect(url_for("dashboard"))
+
+
 # employee+
 @app.route("/customers")
 def customer_list():
