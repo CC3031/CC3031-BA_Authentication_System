@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-# TODO: implement stock decreasing and error handling logic
+# TODO: add return page for returning equipment for customers
 
 from models import Base, engine, db_session, User, Customer, Equipment, Rental
 from security import hash_password, check_password, generate_salt
@@ -157,11 +157,14 @@ def create_rental():
     if request.method == "GET":
         return render_template("Pages/CreateRental.html", user=user, errors=[], equipment=equipment)
 
+    errors = []
     if user.access != "customer":
         customer_id = request.form.get("customer_id")
-        customer = db_session.query(Customer).filter_by(id=customer_id).first().id
+        customer = db_session.query(Customer).filter_by(id=customer_id).first()
         if not customer:
-            return render_template("Pages/CreateRental.html", user=user, errors="Customer not found", equipment=equipment)
+            errors.append("Customer not found")
+            return render_template("Pages/CreateRental.html", user=user, errors=errors, equipment=equipment)
+
     else:
         customer = db_session.query(Customer).filter_by(user_id=user.id).first()
 
@@ -169,13 +172,19 @@ def create_rental():
     quantity = int(request.form.get("quantity"))
     selected_equipment =  db_session.query(Equipment).filter_by(id=selected_equipment_id).first()
 
+    if quantity > selected_equipment.stock:
+        errors.append("Quantity exceeds stock")
+        return render_template("Pages/CreateRental.html", user=user, errors=errors, equipment=equipment)
+    else:
+        selected_equipment.stock -= quantity
+
     new_rental = Rental(
         equipment_id = selected_equipment_id,
         customer_id = customer.id,
         quantity = quantity,
         price = quantity * selected_equipment.price
     )
-    db_session.add(new_rental)
+    db_session.add_all([new_rental, selected_equipment])
     db_session.commit()
     flash("Rental added successfully")
     return redirect(url_for("dashboard"))
