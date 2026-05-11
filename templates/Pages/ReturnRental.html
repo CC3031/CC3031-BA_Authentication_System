@@ -17,7 +17,7 @@
                 <select name="rental_id" id="rental_id" required>
                     {% for r in rentals %}
                         <option value="{{ r.id }}">
-                            ${{ r.price }} - Quantity: {{ r.quantity }}
+                            {{r.equipment.name }} - ${{ "%.2f"|format(r.equipment.price) }} - x{{ r.quantity }}
                         </option>
                     {% endfor %}
                 </select>

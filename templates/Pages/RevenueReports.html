@@ -21,6 +21,8 @@
                     <th>Price per Unit</th>
                     <th>Quantity</th>
                     <th>Total Price</th>
+                    <th>Status</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -29,15 +31,16 @@
                         <td>{{ report.customer.firstname }}</td>
                         <td>{{ report.customer.lastname }}</td>
                         <td>{{ report.equipment.name }}</td>
-                        <td>{{ report.equipment.price }}</td>
+                        <td>${{ "%.2f"|format(report.equipment.price) }}</td>
                         <td>{{ report.quantity }}</td>
-                        <td>{{ report.price }}</td>
+                        <td>${{ "%.2f"|format(report.price) }}</td>
+                        <td>{{ report.status|capitalize }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
 
-        <h3>Total Revenue: {{ total_revenue }}</h3>
+        <h3>Total Revenue: ${{ "%.2f"|format(total_revenue) }}</h3>
     </div>
 </body>
 </html>

@@ -54,3 +54,4 @@ class Rental(Base):
     customer_id = Column(Integer, ForeignKey("customers.id"))
     quantity = Column(Integer, nullable=False)
     price = Column(Float, nullable=False)
+    status = Column(String, nullable=False)
