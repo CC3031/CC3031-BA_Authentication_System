@@ -29,8 +29,8 @@
                         <td>{{ rental.customer.lastname }}</td>
                         <td>{{ rental.equipment.name }}</td>
                         <td>{{ rental.quantity }}</td>
-                        <td>${{ rental.equipment.price }}</td>
-                        <td>${{ rental.price }}</td>
+                        <td>${{ "%.2f"|format(rental.equipment.price) }}</td>
+                        <td>${{ "%.2f"|format(rental.equipment.price) }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

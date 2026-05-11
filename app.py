@@ -1,8 +1,6 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-# TODO: add return page for returning equipment for customers
-
 from models import Base, engine, db_session, User, Customer, Equipment, Rental
 from security import hash_password, check_password, generate_salt
 
@@ -119,7 +117,7 @@ def equipment_list():
     equipment = db_session.query(Equipment).all()
     return render_template("Pages/EquipmentList.html", equipment=equipment)
 
-@app.route("/rentals/return")
+@app.route("/rentals/return", methods=["GET", "POST"])
 def return_rental():
     user = get_logged_in_user()
     if not user:
@@ -128,23 +126,21 @@ def return_rental():
         return redirect(url_for("dashboard"))
     if request.method == "GET":
         customer = db_session.query(Customer).filter_by(user_id=user.id).first()
-        rentals = db_session.query(Rental).filter_by(customer_id=customer.id).all()
-        return render_template("Pages/CreateRental.html", user=user, rentals=rentals)
+        rentals = db_session.query(Rental).filter_by(customer_id=customer.id).filter_by(status="open").all()
+        return render_template("Pages/ReturnRental.html", user=user, rentals=rentals)
 
-    ### implement  return logic for post
-    customer = customer = db_session.query(Customer).filter_by(user_id=user.id).first()
-    rentals = db_session.query(Rental).filter_by(customer_id=customer.id).all()
+    selected_rental_id = int(request.form.get("rental_id"))
+    selected_rental = db_session.query(Rental).filter_by(id=selected_rental_id).first()
+    rented_equipment = db_session.query(Equipment).filter_by(id=selected_rental.equipment_id).first()
 
+    rented_equipment.stock += selected_rental.quantity
 
-
-    selected_rental = request.form.get("rental")
-    rental = db_session.query(Rental).filter_by(id=selected_rental.id).first()
-
-    ### add updated stock value to db, remove rental from db
+    selected_rental.status = "closed"
+    db_session.add_all([rented_equipment, selected_rental])
     db_session.commit()
+
     flash("Rental returned successfully")
     return redirect(url_for("dashboard"))
-
 
 # employee+
 @app.route("/customers")
@@ -167,10 +163,10 @@ def rental_list():
 
     if user.access == "customer":
         customer = db_session.query(Customer).filter_by(user_id=user.id).first()
-        rentals = db_session.query(Rental).filter_by(customer_id=customer.id).all()
+        rentals = db_session.query(Rental).filter_by(customer_id=customer.id).filter_by(status="open").all()
         return render_template("Pages/RentalList.html", rentals=rentals)
 
-    rentals = db_session.query(Rental).all()
+    rentals = db_session.query(Rental).filter_by(status="open").all()
     return render_template("Pages/RentalList.html", rentals=rentals)
 
 # all (employees and admins must provide a customer account for rental)
@@ -209,7 +205,8 @@ def create_rental():
         equipment_id = selected_equipment_id,
         customer_id = customer.id,
         quantity = quantity,
-        price = quantity * selected_equipment.price
+        price = quantity * selected_equipment.price,
+        status = "open"
     )
     db_session.add_all([new_rental, selected_equipment])
     db_session.commit()
@@ -258,7 +255,11 @@ def revenue_reports():
         return redirect(url_for("login"))
     if user.access in ["customer", "employee"]:
         return redirect(url_for("dashboard"))
-    return render_template("Pages/RevenueReports.html")
+    reports = db_session.query(Rental).all()
+    total_revenue = 0
+    for r in reports:
+        total_revenue += r.price
+    return render_template("Pages/RevenueReports.html", reports=reports, total_revenue=total_revenue)
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)

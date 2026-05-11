@@ -1,12 +1,12 @@
 :root {
-    --primary:       #2a7de1;   
-    --primary-dark:  #1a5fb4;   
-    --primary-light: #e8f1fc;   
-    --text-dark:     #1a1a1a;   
-    --text-muted:    #6b7280;   
-    --border:        #d1d5db;   
-    --bg:            #ffffff;   
-    --bg-alt:        #f5f7fa;   
+    --primary:       #2a7de1;
+    --primary-dark:  #1a5fb4;
+    --primary-light: #e8f1fc;
+    --text-dark:     #1a1a1a;
+    --text-muted:    #6b7280;
+    --border:        #d1d5db;
+    --bg:            #ffffff;
+    --bg-alt:        #f5f7fa;
     --radius:        6px;
     --shadow:        0 2px 8px rgba(0, 0, 0, 0.08);
     --font-main:     'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -24,12 +24,12 @@ body {
     padding: 32px 16px 48px;
 }
 h1 {
-    font-size: 2rem;
-    font-weight: 700;
+    font-family: 'Playfair Display', serif;
     text-align: center;
-    color: var(--text-dark);
-    margin-bottom: 6px;
-    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+    color: #1a1a2e;
+    font-size: 2rem;
+    letter-spacing: 0.01em;
 }
 p {
     text-align: center;
@@ -46,7 +46,7 @@ p {
     box-shadow: var(--shadow);
     padding: 32px 36px 28px;
 }
-h2 {
+.section {
     font-size: 1rem;
     font-weight: 700;
     color: var(--text-dark);
@@ -56,9 +56,7 @@ h2 {
     padding-bottom: 4px;
     margin: 24px 0 10px;
 }
-h2:first-of-type {
-    margin-top: 0;
-}
+
 ul {
     list-style: none;
     display: flex;
@@ -115,4 +113,14 @@ a.logout:hover {
 
 .messages {
     color: green;
+}
+
+#dashboard_text {
+    text-align: center;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 24px;
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
 }

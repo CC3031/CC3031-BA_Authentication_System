@@ -7,7 +7,8 @@
     <title>Dashboard</title>
 </head>
 <body>
-    <h1>Dashboard</h1>
+    <h1 id="company_logo">Rental Stuff LLC</h1>
+    <h2 id="dashboard_text">Dashboard</h2>
     <p>Welcome, {{ user.firstname }} {{ user.lastname }} ({{ user.access }})</p>
 
     {% with messages = get_flashed_messages() %}
@@ -19,32 +20,34 @@
     {% endwith %}
 
     {% if user.access == "customer" %}
-        <h2>Equipment</h2>
+        <h2 class="section">Equipment</h2>
         <ul>
             <li><a href="{{ url_for('equipment_list') }}">View Equipment List</a></li>
         </ul>
 
-        <h2>Rentals</h2>
+        <h2 class="section">Rentals</h2>
         <ul>
             <li><a href="{{ url_for('rental_list') }}">View Rental List</a></li>
             <li><a href="{{ url_for('create_rental') }}">Create New Rental</a></li>
+            <li><a href="{{ url_for('return_rental') }}">Return Rental</a></li>
+
         </ul>
 
         <hr>
         <p>Want to register as an employee? Click <a href="{{ url_for('register', as_role='employee') }}">here</a>.</p>
 
     {% elif user.access == "employee" %}
-        <h2>Equipment</h2>
+        <h2 class="section">Equipment</h2>
         <ul>
             <li><a href="{{ url_for('equipment_list') }}">View Equipment List</a></li>
         </ul>
 
-        <h2>Customers</h2>
+        <h2 class="section">Customers</h2>
         <ul>
             <li><a href="{{ url_for('customer_list') }}">View Customer List</a></li>
         </ul>
 
-        <h2>Rentals</h2>
+        <h2 class="section">Rentals</h2>
         <ul>
             <li><a href="{{ url_for('rental_list') }}">View Rental List</a></li>
             <li><a href="{{ url_for('create_rental') }}">Create New Rental</a></li>
@@ -54,24 +57,24 @@
         <p>Want to register as an admin? Click <a href="{{ url_for('register', as_role='admin') }}">here</a>.</p>
 
     {% elif user.access == "admin" %}
-        <h2>Equipment</h2>
+        <h2 class="section">Equipment</h2>
         <ul>
             <li><a href="{{ url_for('equipment_list') }}">View Equipment List</a></li>
             <li><a href="{{ url_for('manage_equipment') }}">Manage Equipment</a></li>
         </ul>
 
-        <h2>Customers</h2>
+        <h2 class="section">Customers</h2>
         <ul>
             <li><a href="{{ url_for('customer_list') }}">View Customer List</a></li>
         </ul>
 
-        <h2>Rentals</h2>
+        <h2 class="section">Rentals</h2>
         <ul>
             <li><a href="{{ url_for('rental_list') }}">View Rental List</a></li>
             <li><a href="{{ url_for('create_rental') }}">Create New Rental</a></li>
         </ul>
 
-        <h2>Reports</h2>
+        <h2 class="section">Reports</h2>
         <ul>
             <li><a href="{{ url_for('revenue_reports') }}">Revenue Reports</a></li>
         </ul>

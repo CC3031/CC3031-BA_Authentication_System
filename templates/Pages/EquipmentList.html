@@ -10,7 +10,6 @@
     <div class="equipment">
         <h1>Rental Stuff LLC</h1>
         <h2>Equipment</h2>
-
         <table>
             <thead>
                 <tr>
@@ -24,7 +23,7 @@
                 <tr>
                     <td>{{ e.name }}</td>
                     <td>{{ e.stock }}</td>
-                    <td>${{ e.price }}</td>
+                    <td>${{ "%.2f"|format(e.price) }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
