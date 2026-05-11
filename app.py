@@ -132,10 +132,13 @@ def return_rental():
         return render_template("Pages/CreateRental.html", user=user, rentals=rentals)
 
     ### implement  return logic for post
+    customer = customer = db_session.query(Customer).filter_by(user_id=user.id).first()
+    rentals = db_session.query(Rental).filter_by(customer_id=customer.id).all()
 
-    selected_equipment_id = request.form.get("equipment_id")
-    quantity = int(request.form.get("quantity"))
-    selected_equipment = db_session.query(Equipment).filter_by(id=selected_equipment_id).first()
+
+
+    selected_rental = request.form.get("rental")
+    rental = db_session.query(Rental).filter_by(id=selected_rental.id).first()
 
     ### add updated stock value to db, remove rental from db
     db_session.commit()
