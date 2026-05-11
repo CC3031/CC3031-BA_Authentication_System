@@ -1,0 +1,43 @@
+<!-- Customer first name, last name, equipment name, price per unit, quantity, total price -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../static/List.css">
+    <title>Revenue Reports</title>
+</head>
+<body>
+    <div class="reports">
+        <h1>Rental Stuff LLC</h1>
+        <h2>Revenue Reports</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Equipment</th>
+                    <th>Price per Unit</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                    <tr>
+                        <td>{{ report.customer.firstname }}</td>
+                        <td>{{ report.customer.lastname }}</td>
+                        <td>{{ report.equipment.name }}</td>
+                        <td>{{ report.equipment.price }}</td>
+                        <td>{{ report.quantity }}</td>
+                        <td>{{ report.price }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Total Revenue: {{ total_revenue }}</h3>
+    </div>
+</body>
+</html>
